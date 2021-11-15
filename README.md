@@ -200,7 +200,7 @@ kubectl config view
 
 #### Create role and binding
 
-## NB! By task description we need to restrict user operations by one namespace *prod*. In this case we must use _ClusterRole_ object for referencing to admin and view rights and _RoleBinding_ object for referencing to namespace *prod*. Also we can use cluster internal *admin* and *view* _ClusterRole_ objects, but for simple example (not for production) we create new one for each user.
+#### NB! By task description we need to restrict user operations by one namespace *prod*. In this case we must use _ClusterRole_ object for referencing to admin and view rights and _RoleBinding_ object for referencing to namespace *prod*. Also we can use cluster internal *admin* and *view* _ClusterRole_ objects, but for simple example (not for production) we create new one for each user.
 
 
 ### Task:  Give the user *prod_admin* admin rights on ns *prod*.
@@ -238,8 +238,8 @@ roleRef:
 
 #### Create and bind role to user and namespace
 ```
-kubctl apply -f ClusterRole-prod-admin.yaml
-kubctl apply -f RoleBinding-prod_admin.yaml
+kubectl apply -f ClusterRole-prod-admin.yaml
+kubectl apply -f RoleBinding-prod_admin.yaml
 ```
 
 ### Task: give the user *prod_view* only view rights on namespace *prod*
@@ -276,6 +276,75 @@ roleRef:
 
 #### Create and bind role to user and namespace
 ```
-kubctl apply -f ClusterRole-prod-view.yaml
-kubctl apply -f RoleBinding-prod_view.yaml
+kubectl apply -f ClusterRole-prod-view.yaml
+kubectl apply -f RoleBinding-prod_view.yaml
+```
+
+## Homework 4.3
+Create a serviceAccount sa-namespace-admin. Grant full rights to namespace default. Create context, authorize using the created sa, check accesses.
+
+
+sa-namespace-admin.yaml
+```
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-namespace-admin
+  namespace: default
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sa-namespace-admin-full-access
+  namespace: default
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sa-namespace-admin-full-access
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: sa-namespace-admin
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sa-namespace-admin-full-access
+```
+
+Create objects
+```
+k apply -f sa-namespace-admin.yaml
+```
+
+Save token to variable 
+```
+k describe sa sa-namespace-admin -n default
+
+export SA_TOKEN=`kubectl get secrets -n default $(kubectl describe sa -n default sa-namespace-admin|grep Tokens|awk '{print $2}') -o yaml|grep -E "^[[:space:]]*token:"|awk '{print $2}'|base64 -d`
+
+echo $SA_TOKEN
+```
+
+Copy sa token to KUBECONFIG file
+```
+kubectl config set-credentials sa-namespace-admin --token=$SA_TOKEN
+```
+
+Create and bind contexts for sa user 
+```
+kubectl config set-context sa_admin --cluster docker-desktop --user sa-namespace-admin --namespace default
+```
+
+Switch to context sa_admin
+```
+kubectl config use-context sa_admin
 ```
