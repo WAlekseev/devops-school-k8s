@@ -1,0 +1,11 @@
+kind: ClusterRole  
+apiVersion: rbac.authorization.k8s.io/v1  
+metadata:  
+  name: deploy-pod-editor
+rules:  
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"]

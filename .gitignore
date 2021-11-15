@@ -1,0 +1,6 @@
+*.crt
+*.csr
+*.key
+*.b64
+cert-sign-request-user-*.yaml
+cert-sign-request-deploy_*.yaml

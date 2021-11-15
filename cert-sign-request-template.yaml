@@ -1,0 +1,8 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest  
+metadata:  
+  name: k8s_user
+spec:  
+  request: __CERT_REQ__
+  signerName: kubernetes.io/kube-apiserver-client
+  usages: ['digital signature', 'key encipherment', 'client auth']
