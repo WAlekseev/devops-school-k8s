@@ -348,3 +348,9 @@ Switch to context sa_admin
 ```
 kubectl config use-context sa_admin
 ```
+
+** NOTE **
+
+On docker-desktop cluster we must delete internal ClusterRoleBinding _docker-for-desktop-binding_ to enforce our namespace restrictions
+https://github.com/docker/for-mac/issues/3694
+
