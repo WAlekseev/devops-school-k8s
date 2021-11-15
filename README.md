@@ -12,7 +12,7 @@ openssl genrsa -out deploy_edit.key 2048
 openssl req -new -key deploy_edit.key -out deploy_edit.csr -subj "/CN=deploy_edit/O=deploy_edit_group" 
 ```
 
-## NB! Because I have a docker-desktop based k8s cluster my way to create users certificates does not correlate with minikube way. It's because docker-desktop doesn't share CA crt and key and it's hard to get. So I will use a Kubernetes API to complete this task.
+#### NB! Because I have a docker-desktop based k8s cluster my way to create users certificates does not correlate with minikube way. It's because docker-desktop doesn't share CA crt and key and it's hard to get. So I will use a Kubernetes API to complete this task.
 
 Create template cert-sign-request-template.yaml
 ```
@@ -68,7 +68,7 @@ kubectl config view
 ```
 
 
-## NB! Because in this task text do not strictly mention what kind of scope are needed for users *deploy_view* and *deploy_edit* - cluster or namespace, I'm assuming that we bind them to cluster scope, so I'm using ClusterRole and ClusterRoleBinding to complete the task.
+#### NB! Because in this task text do not strictly mention what kind of scope are needed for users *deploy_view* and *deploy_edit* - cluster or namespace, I'm assuming that we bind them to cluster scope, so I'm using ClusterRole and ClusterRoleBinding to complete the task.
 
 Task: Give the user deploy_view rights only to view deployments, pods.
 Create role definition for *deploy_view*
